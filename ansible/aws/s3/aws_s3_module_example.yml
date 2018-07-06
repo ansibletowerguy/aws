@@ -1,1 +1,35 @@
-##
+---
+# Description: Sometimes using an ansible module with tower isn't clear, and you need to take advantage of stored
+# credentials in Tower.  This example shows one way that works, specific to the aws_s3 ansible module.   
+# Below you can see the 'environment' is added and lookups
+# are what populate the 'variable' with the access key and secret key.
+# What makes it work? You must have AWS keys stored in Ansible tower, and you must put the AWS Creds
+# on your Job Template in "Credentials" . Also, the access key/secret key you stored must have the appropriate rights
+# to do whatever the s3 action is.
+
+
+- name: An example of how to pass aws credentials from anisble tower to the ansible s3 module
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+  
+    - name: Download software from s3 bucket
+      aws_s3:
+        bucket: mybucketname #Just the bucket name here dont put subfolders
+        object: "/path/to/yourfile/inthes3bucket/filename.txt" #put the full path to your object, including the filename
+        dest: "/tmp/filename.txt" # where you want to put the file on the REMOTE host.
+        region: us-east-1         # Obviously the AWS region, its not always us-east-1
+        ignore_nonexistent_bucket: true
+        mode: get                 # This example is a get, or download of a file, could be any action.
+        validate_certs: yes
+      become: true                # May not be necessary, depends on where you're putting the file on the linux host.
+      register: aws_s3_pull       # register a variable
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+ 
+    - debug:
+        var: aws_s3_pull  #show results
+
+...
