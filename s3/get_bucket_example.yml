@@ -1,1 +1,32 @@
+---
+# Description:
+# The key usage here is that you have created a Job Template in Tower and are using stored credentials
+# AWS credentials.  This assumes that you are using tower to run this command on a remote host in AWS,
+# so a machine credentials (ssh key with ec2-user or centos) is also applied to the Job Template as a
+# credential.
+# The key to passing the stored aws credentials to this module are the environment: lines at the bottom.
+# You may not need become: true, it depends on where you are putting the file on your remote host.
 
+- name: pull contents from an s3 bucket using ansible tower stored AWS Credentials
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+  
+    - name: Download software from s3 bucket
+      aws_s3:
+        bucket: yourbucketnamehere
+        object: "/path_to_your_object/filename_and_extension.zip"
+        dest: "/tmp/filename_and_extension.zip"
+        region: us-east-1
+        ignore_nonexistent_bucket: true
+        mode: get
+        validate_certs: yes
+      become: true
+      register: aws_s3_pull
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+
+
+...
