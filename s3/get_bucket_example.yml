@@ -4,6 +4,7 @@
 # AWS credentials.  This assumes that you are using tower to run this command on a remote host in AWS,
 # so a machine credentials (ssh key with ec2-user or centos) is also applied to the Job Template as a
 # credential.
+# 
 # The key to passing the stored aws credentials to this module are the environment: lines at the bottom.
 # You may not need become: true, it depends on where you are putting the file on your remote host.
 
