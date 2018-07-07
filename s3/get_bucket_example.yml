@@ -1,6 +1,6 @@
 ---
 # Description:
-# The key usage here is that you have created a Job Template in Tower and are using stored credentials
+# The key usage here is that you have created a Job Template in Tower and are using stored 
 # AWS credentials.  This assumes that you are using tower to run this command on a remote host in AWS,
 # so a machine credentials (ssh key with ec2-user or centos) is also applied to the Job Template as a
 # credential.
